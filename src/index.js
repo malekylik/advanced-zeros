@@ -6,30 +6,37 @@ const simple = [2,	3,	5,	7,	11,	13,	17,	19,	23,
 
 
 module.exports = function getZerosCount(number, base) {
-  let count = 0;
-  let bas;
+  let count = Number.MAX_SAFE_INTEGER;
+  let bas = [];
 
   for(let i = simple.length - 1; i >= 0; i--)
-    if(base % simple[i] === 0){
-      bas = simple[i];
-      break;
-    }
-
-    let cof = 0;
-
-    if((base / bas) % bas === 0){
-      let temp = base / bas;
-      while(temp % bas === 0){ 
-        cof++;
-        temp /= bas;
-      }
-    }
-
-  for(let i = bas; i < number; i*=bas){
-    count+=Math.floor(number / i);
+  if(base % simple[i] === 0){
+    bas.push({
+      value:simple[i],
+      cof:0
+    });
   }
 
-  if(cof) count = Math.floor(count / (cof + 1)); 
 
-  return count;
+
+for(let i = 0; i < bas.length; i++){  
+      let temp = base;
+      while(temp % bas[i].value === 0){ 
+        bas[i].cof++;
+        temp /= bas[i].value;
+      }
+  }
+
+
+for(let j = 0; j < bas.length; j++){ 
+  let temp = 0;
+   for(let i = bas[j].value; i < number; i*=bas[j].value){
+    temp+=Math.floor(number / i);
+  }
+    count = Math.min(count, Math.floor(temp / bas[j].cof));
+}
+
+
+
+return count;
 }
